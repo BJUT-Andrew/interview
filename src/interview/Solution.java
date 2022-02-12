@@ -14,6 +14,7 @@ public class Solution {
     }
 
     public int maximumProduct(int[] nums) {
+
         int n = nums.length;
         //min1表示数组中最小的元素，min2表示数组中第2小的元素；
         int min1 = Integer.MAX_VALUE, min2 = Integer.MAX_VALUE;
