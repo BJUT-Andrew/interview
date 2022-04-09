@@ -2,10 +2,7 @@ package interview;
 
 import org.junit.Test;
 
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author andrew
@@ -415,4 +412,67 @@ public class Solution {
     }
 
 
+    List<List<Integer>> res = new ArrayList<>();
+    List<Integer> oneRes = new ArrayList<>();
+    boolean[] used;
+
+    public List<List<Integer>> permute(int[] nums) {
+        int n = nums.length;
+        used = new boolean[n];
+        dfs(nums, 0);
+        return res;
+    }
+
+    private void dfs(int[] nums, int begin){
+        //1.递归终止条件；
+        if(begin == nums.length){
+            res.add(new ArrayList<>(oneRes));
+            return;
+        }
+
+        //2.for 选择 in 选择列表：
+        for(int i = 0; i < nums.length; i++){
+            //3.选择；
+            if(!used[i]){
+                oneRes.add(nums[i]);
+                used[i] = true;
+
+                //4.递归进入下一层；
+                dfs(nums, begin + 1);
+
+                //5.撤销选择；
+                oneRes.remove(oneRes.size() - 1);
+                used[i] = false;
+            }
+        }
+    }
+
+    @Test
+    public void testPermute(){
+        System.out.println(permute(new int[]{1,2,3}));
+    }
+
+    public int reverse(int x) {
+        int result = 0;
+
+        while(x > 0){
+            //每次取x的最后一位
+            int temp = x % 10;
+            x /= 10;
+
+            //★改变result之前判断，改变后是否会越界★
+            if(result < Integer.MIN_VALUE / 10 || result > Integer.MAX_VALUE / 10){
+                return 0;
+            }
+
+            result = result * 10 + temp;
+        }
+
+        return result;
+    }
+
+    @Test
+    public void testReverse(){
+        System.out.println(reverse(-123));
+    }
 }
