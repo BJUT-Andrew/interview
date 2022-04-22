@@ -2,6 +2,7 @@ package interview;
 
 import org.junit.Test;
 
+import javax.swing.text.html.HTML;
 import java.util.*;
 
 /**
@@ -475,4 +476,284 @@ public class Solution {
     public void testReverse(){
         System.out.println(reverse(-123));
     }
+
+    public void moveZeroes(int[] nums) {
+        int nextNotZeroIndex = 0;
+        boolean hasMetZero = false;
+        int n = nums.length;
+        for(int i = 0; i < n; i++){
+            if(nums[i] == 0){
+                hasMetZero = true;
+            }
+            if(nums[i] != 0 && hasMetZero){
+                nextNotZeroIndex = i;
+                break;
+            }
+        }
+
+        int i = 0;
+        while(i < n){
+            if(nums[i] == 0){
+                swap(nums, i, nextNotZeroIndex);
+                i = nextNotZeroIndex;
+                for(int j = nextNotZeroIndex; j < n; j++){
+                    if(nums[j] != 0){
+                        nextNotZeroIndex = j;
+                        break;
+                    }
+                }
+            }else{
+                i++;
+            }
+        }
+    }
+
+    @Test
+    public void testMoveZeroes(){
+        moveZeroes(new int[]{0, 1, 0, 3, 12});
+
+        StringBuilder sb = new StringBuilder();
+    }
+
+    public String decodeString(String s) {
+        StringBuilder result = new StringBuilder();
+        Stack<String> stack = new Stack<>();
+        int i = 0;
+        int n = s.length();
+
+        while(i < n){
+            char c = s.charAt(i);
+
+            //1.字母和'['入栈；
+            if(Character.isLetter(c) || c == '['){
+                stack.push(c + "");
+                i++;
+                //2.遇到数字，将相邻数字也记录下来一起入栈，直到'['
+            }else if(Character.isDigit(c)){
+                StringBuilder num = new StringBuilder();
+                while(Character.isDigit(s.charAt(i))){
+                    num.append(s.charAt(i));
+                    i++;
+                }
+                stack.push(num.toString());
+                //3.遇']'，出栈拼接
+            }else{
+                //获取[]内的字符串
+                i++;
+                StringBuilder temp = new StringBuilder();
+                while(!"[".equals(stack.peek())){
+                    temp.append(stack.pop());
+                }
+                temp = temp.reverse();
+                String oneResult = temp.toString();
+                //[出栈
+                stack.pop();
+                //取当前字符串的重复次数
+                int repeatTime = Integer.parseInt(stack.pop());
+                //重复repeatTime次，再入栈
+                temp = new StringBuilder();
+                while(repeatTime != 0){
+                    temp.append(oneResult);
+                    repeatTime--;
+                }
+                stack.push(temp.toString());
+            }
+        }
+
+        while(!stack.isEmpty()){
+            result.insert(0, stack.pop());
+        }
+        return result.toString();
+    }
+
+    @Test
+    public void testDecodeString(){
+        String string = decodeString("3[z]2[2[y]pq4[2[jk]e1[f]]]ef");
+    }
+
+//    public int calculate(String s) {
+//        Stack<Integer> nums = new Stack<>();
+//        Stack<Character> ops = new Stack<>();
+//        int n = s.length();
+//
+//        int i = 0;
+//        while(i < n){
+//            char c = s.charAt(i);
+//            if(c == ' '){
+//                i++;
+//            }else if(c >= '0' && c <= '9'){
+//                int num = 0;
+//                while(i < n && s.charAt(i) >= '0' && s.charAt(i) <= '9'){
+//                    num = num * 10 + (s.charAt(i) - '0');
+//                    i++;
+//                }
+//                nums.push(num);
+//            }else if(c == '('){
+//                ops.push(c);
+//                i++;
+//            }else if(c == ')'){
+//                while(ops.peek() != '('){
+//                    cacl(nums, ops);
+//                }
+//                ops.pop();
+//                i++;
+//            }else{
+//                while(!ops.isEmpty() && ops.peek() != '('){
+//                    cacl(nums, ops);
+//                }
+//                ops.push(c);
+//                i++;
+//            }
+//        }
+//
+//        while(!ops.isEmpty()){
+//            cacl(nums, ops);
+//        }
+//        return nums.pop();
+//    }
+//
+//    private void cacl(Stack<Integer> nums, Stack<Character> ops){
+//        if(nums.size() < 2 || ops.isEmpty()){
+//            return;
+//        }
+//
+//        int num1 = nums.pop();
+//        int num2 = nums.pop();
+//        char op = ops.pop();
+//
+//        int result = op == '+' ? num2 + num1 : num2 - num1;
+//        nums.push(result);
+//    }
+
+//    public int calculate(String s) {
+//        Stack<Integer> nums = new Stack<>();
+//        //① 解决s的首个字符为'-'
+//        nums.push(0);
+//        Stack<Character> ops = new Stack<>();
+//        int n = s.length();
+//
+//        //运算符优先级
+//        Map<Character, Integer> map = new HashMap<>();
+//        map.put('+', 1);
+//        map.put('-', 1);
+//        map.put('*', 2);
+//        map.put('/', 2);
+//
+//        int i = 0;
+//        while(i < n){
+//            char c = s.charAt(i);
+//            if(c == ' '){
+//                i++;
+//            }else if(c >= '0' && c <= '9'){
+//                int num = 0;
+//                while(i < n && s.charAt(i) >= '0' && s.charAt(i) <= '9'){
+//                    num = num * 10 + (s.charAt(i) - '0');
+//                    i++;
+//                }
+//                nums.push(num);
+//            }else if(c == '('){
+//                ops.push(c);
+//                i++;
+//                //② 解决'('后第一个字符为'-'
+//                if(s.charAt(i) == '-'){
+//                    nums.push(0);
+//                }
+//            }else if(c == ')'){
+//                while(ops.peek() != '('){
+//                    cacl(nums, ops);
+//                }
+//                ops.pop();
+//                i++;
+//            }else{
+//                while(!ops.isEmpty() && ops.peek() != '('){
+//                    if(map.get(ops.peek()) >= map.get(c)){
+//                        cacl(nums, ops);
+//                    }else{
+//                        break;
+//                    }
+//                }
+//                ops.push(c);
+//                i++;
+//            }
+//        }
+//
+//        while(!ops.isEmpty()){
+//            cacl(nums, ops);
+//        }
+//        return nums.pop();
+//    }
+//
+//    private void cacl(Stack<Integer> nums, Stack<Character> ops){
+//        if(nums.size() < 2 || ops.isEmpty()){
+//            return;
+//        }
+//
+//        int num1 = nums.pop();
+//        int num2 = nums.pop();
+//        char op = ops.pop();
+//
+//        //计算时，注意操作数先后顺序
+//        int result = 0;
+//        switch(op){
+//            case '+':
+//                result = num2 + num1;
+//            case '-':
+//                result = num2 - num1;
+//            case '*':
+//                result = num2 * num1;
+//            case '/':
+//                result = num2 / num1;
+//        }
+//        nums.push(result);
+//    }
+//
+//    @Test
+//    public void caclTest(){
+//        calculate("3+2*2");
+//    }
+
+
+
+
+
+    //1 7 5 11   12
+    public static List<Integer> solution(int[] nums, int target){
+        int n = nums.length;
+        List<Integer> res = new ArrayList<>();
+        Map<Integer, Integer> map = new HashMap<>();
+
+        //map存储(nums[i], i)
+        for(int i = 0; i < n; i++){
+            map.put(nums[i], i);
+        }
+
+        for(int i = 0; i < n; i++){
+            if (map.get(target - nums[i]) != null && map.get(target - nums[i]) != i){
+                res.add(i);
+                res.add(map.get(target - nums[i]));
+                return res;
+            }
+        }
+
+        return res;
+    }
+
+    @Test
+    public void testSolution(){
+        List<Integer> result = solution(new int[]{1, 7, 6, 11}, 12);
+        for(Integer i : result){
+            System.out.println(i);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
 }

@@ -1,5 +1,10 @@
 package interview;
 
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author andrew
  * @create 2021-12-06 14:52
@@ -59,4 +64,12 @@ public class SolutionTopJoy {
         strToArray[i] = strToArray[j];
         strToArray[j] = temp;
     }
+
+    @Test
+    public void test(){
+        Map<Integer, Integer> map = new HashMap<>();
+        int count = map.get(2);
+        System.out.println(count);
+    }
+
 }
